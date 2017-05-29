@@ -13,12 +13,10 @@
 
 
 -- Dumping database structure for core
-DROP DATABASE IF EXISTS `core`;
 CREATE DATABASE IF NOT EXISTS `core` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `core`;
 
 -- Dumping structure for table core.user
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `login` char(32) DEFAULT NULL COMMENT 'optionally used for auth',
@@ -42,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table core.user_email
-DROP TABLE IF EXISTS `user_email`;
 CREATE TABLE IF NOT EXISTS `user_email` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
@@ -58,7 +55,6 @@ CREATE TABLE IF NOT EXISTS `user_email` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table core.user_facebook
-DROP TABLE IF EXISTS `user_facebook`;
 CREATE TABLE IF NOT EXISTS `user_facebook` (
   `user_id` int(10) unsigned NOT NULL,
   `facebook_id` bigint(20) unsigned NOT NULL,
@@ -67,7 +63,6 @@ CREATE TABLE IF NOT EXISTS `user_facebook` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table core.user_ip
-DROP TABLE IF EXISTS `user_ip`;
 CREATE TABLE IF NOT EXISTS `user_ip` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
@@ -79,7 +74,6 @@ CREATE TABLE IF NOT EXISTS `user_ip` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table core.user_password
-DROP TABLE IF EXISTS `user_password`;
 CREATE TABLE IF NOT EXISTS `user_password` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
@@ -94,11 +88,10 @@ CREATE TABLE IF NOT EXISTS `user_password` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table core.user_profile
-DROP TABLE IF EXISTS `user_profile`;
 CREATE TABLE IF NOT EXISTS `user_profile` (
   `user_id` int(10) unsigned NOT NULL,
-  `name_first` varchar(128) DEFAULT NULL,
-  `name_last` varchar(128) DEFAULT NULL,
+  `first_name` varchar(128) DEFAULT NULL,
+  `last_name` varchar(128) DEFAULT NULL,
   `birth_date` date DEFAULT NULL,
   `gender` enum('male','female') DEFAULT NULL,
   PRIMARY KEY (`user_id`),
@@ -107,7 +100,6 @@ CREATE TABLE IF NOT EXISTS `user_profile` (
 
 -- Data exporting was unselected.
 -- Dumping structure for trigger core.user_after_insert
-DROP TRIGGER IF EXISTS `user_after_insert`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `user_after_insert` AFTER INSERT ON `user` FOR EACH ROW BEGIN
@@ -118,7 +110,7 @@ CREATE TRIGGER `user_after_insert` AFTER INSERT ON `user` FOR EACH ROW BEGIN
 	/*
 		CREATE EMAIL VERIFY TOKEN IF EMAIL IS PRESENT FOR NEW USER
 	*/
-	IF NEW.email Is NOT NULL THEN
+	IF NEW.email IS NOT NULL AND NOT NEW.email_verified THEN
 		INSERT INTO user_email
 		SET
 		user_email.user_id=NEW.id,
@@ -130,7 +122,6 @@ DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger core.user_after_update
-DROP TRIGGER IF EXISTS `user_after_update`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `user_after_update` AFTER UPDATE ON `user` FOR EACH ROW BEGIN
@@ -156,7 +147,6 @@ DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger core.user_before_update
-DROP TRIGGER IF EXISTS `user_before_update`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `user_before_update` BEFORE UPDATE ON `user` FOR EACH ROW BEGIN
@@ -175,7 +165,6 @@ DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger core.user_email_after_update
-DROP TRIGGER IF EXISTS `user_email_after_update`;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `user_email_after_update` AFTER UPDATE ON `user_email` FOR EACH ROW BEGIN
